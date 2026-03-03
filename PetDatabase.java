@@ -64,4 +64,24 @@ public class PetDatabase {
         System.out.println("+----------------------+");
         System.out.println(count + " rows in set.");
     }
+
+    //update a pet by id
+    public void updatePet(int id, String newName, int newAge) {
+        if (id >= 0 && id < pets.size()) {
+            pets.get(id).setName(newName);
+            pets.get(id).setAge(newAge);
+        }
+    }
+
+    //remove a pet by id
+    public void removePet(int id) {
+        if (id >= 0 && id < pets.size()) {
+            pets.remove(id);
+        }
+    }
+
+    //get number of pets
+    public int getPetCount() {
+        return pets.size();
+    }
 }
