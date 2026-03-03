@@ -15,6 +15,7 @@ public class Main {
             System.out.println("What would you like to do?");
             System.out.println("1) View all pets");
             System.out.println("2) Add more pets");
+            System.out.println("3) Search pets");
             System.out.println("0) Exit");
             System.out.print("Your choice: ");
             choice = scanner.nextInt();
@@ -28,11 +29,14 @@ public class Main {
                 case 2:
                     addPets();
                     break;
+                case 3:
+                    searchPets();
+                    break;
                 case 0:
                     System.out.println("Goodbye!");
                     break;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid option. Please try again.");
             }
         } while (choice != 0);
         
@@ -55,14 +59,14 @@ public class Main {
             
             String[] parts = input.split(" ");
             if (parts.length == 2) {
-                //try to parse the age
+                //try to parse the age an int.
                 try {
                     String name = parts[0];
                     int age = Integer.parseInt(parts[1]);
                     database.addPet(new Pet(name, age));
                     petsAdded++;
                 } catch (NumberFormatException e) {
-                    System.out.println("Error: Age must be a number. Please try again.");
+                    System.out.println("Error: Age must be a number.");
                 }
             } else {
                 System.out.println("Error: Please enter name and age separated by a space.");
@@ -70,5 +74,20 @@ public class Main {
         }
         
         System.out.println(petsAdded + " pets added.");
+    }
+
+    //search for pets by name or age
+    private static void searchPets() {
+        System.out.print("Enter a name or age to search: ");
+        String input = scanner.nextLine();
+        
+        //check if input is a number
+        try {
+            int age = Integer.parseInt(input);
+            database.searchByAge(age);
+        } catch (NumberFormatException e) {
+            //not a number so search by name
+            database.searchByName(input);
+        }
     }
 }
