@@ -13,15 +13,14 @@ public class Main {
         int choice;
         do {
             //print menu
-            System.out.println();
-            System.out.println("Main Menu");
+            System.out.println("Pet Database Program.");
             System.out.println("What would you like to do?");
             System.out.println("1) View all pets");
-            System.out.println("2) Add more pets");
+            System.out.println("2) Add new pets");
             System.out.println("3) Search pets");
             System.out.println("4) Update a pet");
             System.out.println("5) Remove a pet");
-            System.out.println("0) Exit");
+            System.out.println("6) Exit program");
             System.out.print("Your choice: ");
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -43,7 +42,7 @@ public class Main {
                 case 5:
                     removePet();
                     break;
-                case 0:
+                case 6:
                     //save pets to file before exiting
                     database.saveNewPets();
                     System.out.println("Goodbye!");
@@ -51,19 +50,18 @@ public class Main {
                 default:
                     System.out.println("Invalid option. Please try again.");
             }
-        } while (choice != 0);
+        } while (choice != 6);
         
         scanner.close();
     }
 
     //method to add pets
     private static void addPets() {
-        System.out.println("Add pets (name age). Type 'done' when finished:");
         int petsAdded = 0;
         
         //keep reading until done
         while (true) {
-            System.out.print("add pet (name age): ");
+            System.out.print("add pet (name, age): ");
             String input = scanner.nextLine();
             
             if (input.equals("done")) {
@@ -71,18 +69,32 @@ public class Main {
             }
             
             String[] parts = input.split(" ");
-            if (parts.length == 2) {
-                //try to parse the age an int.
-                try {
-                    String name = parts[0];
-                    int age = Integer.parseInt(parts[1]);
-                    database.addPet(new Pet(name, age));
-                    petsAdded++;
-                } catch (NumberFormatException e) {
-                    System.out.println("Error: Age must be a number.");
+            if (parts.length != 2) {
+                System.out.println("Error: " + input + " is not a valid input.");
+                continue;
+            }
+            
+            //try to parse the age an int.
+            try {
+                String name = parts[0];
+                int age = Integer.parseInt(parts[1]);
+                
+                //validate age range
+                if (age < 1 || age > 20) {
+                    System.out.println("Error: " + age + " is not a valid age.");
+                    continue;
                 }
-            } else {
-                System.out.println("Error: Please enter name and age separated by a space.");
+                
+                //check if database is full
+                if (database.databaseFull()) {
+                    System.out.println("Error: Database is full.");
+                    break;
+                }
+                
+                database.addPet(new Pet(name, age));
+                petsAdded++;
+            } catch (NumberFormatException e) {
+                System.out.println("Error: " + input + " is not a valid input.");
             }
         }
         
@@ -115,7 +127,7 @@ public class Main {
         
         //check if id is valid
         if (id < 0 || id >= database.getPetCount()) {
-            System.out.println("Error: ID " + id + " not found.");
+            System.out.println("Error: ID " + id + " does not exist.");
             return;
         }
         
@@ -127,13 +139,20 @@ public class Main {
             try {
                 String newName = parts[0];
                 int newAge = Integer.parseInt(parts[1]);
+                
+                //validate age range
+                if (newAge < 1 || newAge > 20) {
+                    System.out.println("Error: " + newAge + " is not a valid age.");
+                    return;
+                }
+                
                 database.updatePet(id, newName, newAge);
                 System.out.println("Pet updated.");
             } catch (NumberFormatException e) {
-                System.out.println("Error: Age must be a number.");
+                System.out.println("Error: " + input + " is not a valid input.");
             }
         } else {
-            System.out.println("Error: Please enter name and age separated by a space.");
+            System.out.println("Error: " + input + " is not a valid input.");
         }
     }
 
@@ -148,11 +167,14 @@ public class Main {
         
         //check if id is valid
         if (id < 0 || id >= database.getPetCount()) {
-            System.out.println("Error: ID " + id + " not found.");
+            System.out.println("Error: ID " + id + " does not exist.");
             return;
         }
         
+        //get pet info before removing
+        String name = database.getPetName(id);
+        int age = database.getPetAge(id);
         database.removePet(id);
-        System.out.println("Pet removed.");
+        System.out.println(name + " " + age + " is removed.");
     }
 }

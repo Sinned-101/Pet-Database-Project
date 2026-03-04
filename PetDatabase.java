@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 public class PetDatabase {
     //file path for saving/loading pets
     private static final String FILE_PATH = "File/pets.txt";
+    //max number of pets allowed
+    private static final int MAX_PETS = 5;
     private ArrayList<Pet> pets;
 
     //constructor
@@ -91,6 +93,21 @@ public class PetDatabase {
         return pets.size();
     }
 
+    //get pet name by id
+    public String getPetName(int id) {
+        return pets.get(id).getName();
+    }
+
+    //get pet age by id
+    public int getPetAge(int id) {
+        return pets.get(id).getAge();
+    }
+
+    //check if database is full
+    public boolean databaseFull() {
+        return pets.size() >= MAX_PETS;
+    }
+
     //load pets from file
     public void loadExistingPets() {
         try {
@@ -105,9 +122,8 @@ public class PetDatabase {
                 }
             }
             fileReader.close();
-            System.out.println("Pet data loaded.");
         } catch (FileNotFoundException e) {
-            System.out.println("No existing data. Starting fresh.");
+            //file doesn't exist yet, start with empty list
         }
     }
 
@@ -119,7 +135,6 @@ public class PetDatabase {
                 writer.println(pets.get(i).getName() + " " + pets.get(i).getAge());
             }
             writer.close();
-            System.out.println("Pet data saved.");
         } catch (FileNotFoundException e) {
             System.out.println("Error saving to file.");
         }
