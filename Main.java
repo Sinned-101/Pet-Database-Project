@@ -7,6 +7,9 @@ public class Main {
 
     //main method
     public static void main(String[] args) {
+        //load pets from file on startup
+        database.loadExistingPets();
+        
         int choice;
         do {
             //print menu
@@ -41,6 +44,8 @@ public class Main {
                     removePet();
                     break;
                 case 0:
+                    //save pets to file before exiting
+                    database.saveNewPets();
                     System.out.println("Goodbye!");
                     break;
                 default:
